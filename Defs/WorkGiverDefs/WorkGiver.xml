@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <WorkGiverDef>
+    <defName>PawnRestrain</defName>
+    <label>restrain allied pawn</label>
+    <giverClass>Restrain.WorkGiver_Restrain</giverClass>
+    <workType>BasicWorker</workType>
+    <verb>restrain</verb>
+    <gerund>restraining</gerund>
+    <priorityInType>60</priorityInType>
+    <canBeDoneWhileDrafted>true</canBeDoneWhileDrafted>
+    <directOrderable>true</directOrderable>
+  </WorkGiverDef>
+  
+</Defs>
