@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restrain", "Source\Restrain.csproj", "{D7D21B4A-1DA7-41D8-B202-C58CA8FA62AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restrain", "Source\v1.1\Restrain.csproj", "{D7D21B4A-1DA7-41D8-B202-C58CA8FA62AA}"
 EndProject
 Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "RimWorldWin64", "..\..\RimWorldWin64.exe", "{026FDC99-4A50-429A-B952-578CEA5F465F}"
 	ProjectSection(DebuggerProjectSystem) = preProject
@@ -20,14 +20,22 @@ Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "RimWorldWin64", "..\..\RimW
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D7D21B4A-1DA7-41D8-B202-C58CA8FA62AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7D21B4A-1DA7-41D8-B202-C58CA8FA62AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7D21B4A-1DA7-41D8-B202-C58CA8FA62AA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D7D21B4A-1DA7-41D8-B202-C58CA8FA62AA}.Debug|x64.Build.0 = Debug|Any CPU
 		{D7D21B4A-1DA7-41D8-B202-C58CA8FA62AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7D21B4A-1DA7-41D8-B202-C58CA8FA62AA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D7D21B4A-1DA7-41D8-B202-C58CA8FA62AA}.Release|x64.ActiveCfg = Release|Any CPU
 		{D7D21B4A-1DA7-41D8-B202-C58CA8FA62AA}.Release|x64.Build.0 = Release|Any CPU
+		{026FDC99-4A50-429A-B952-578CEA5F465F}.Debug|Any CPU.ActiveCfg = Release|x64
+		{026FDC99-4A50-429A-B952-578CEA5F465F}.Debug|x64.ActiveCfg = Release|x64
 		{026FDC99-4A50-429A-B952-578CEA5F465F}.Release|Any CPU.ActiveCfg = Release|x64
 		{026FDC99-4A50-429A-B952-578CEA5F465F}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection

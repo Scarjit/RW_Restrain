@@ -4,4 +4,7 @@
     <StartAction>Project</StartAction>
     <StartProgram>G:\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64.exe</StartProgram>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <StartProgram>G:\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64.exe</StartProgram>
+  </PropertyGroup>
 </Project>
