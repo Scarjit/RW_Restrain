@@ -8,7 +8,7 @@ namespace Restrain
     public class WorkGiver_Restrain : WorkGiver_Scanner
     {
         /// <summary>
-        /// Only return pawns, that are in own faction and snapped out.
+        ///     Only return pawns, that are in own faction and snapped out.
         /// </summary>
         /// <param name="pawn"></param>
         /// <param name="forced"></param>
@@ -23,11 +23,12 @@ namespace Restrain
                     return false;
                 }
             }
+
             return true;
         }
 
         /// <summary>
-        /// Always allow to restrain
+        ///     Always allow to restrain
         /// </summary>
         /// <param name="pawn"></param>
         /// <returns></returns>
@@ -37,7 +38,7 @@ namespace Restrain
         }
 
         /// <summary>
-        /// Only check WorkGiver conditions on Free Colonists
+        ///     Only check WorkGiver conditions on Free Colonists
         /// </summary>
         /// <param name="pawn"></param>
         /// <returns></returns>
@@ -46,10 +47,17 @@ namespace Restrain
             return pawn.Map.mapPawns.FreeColonistsSpawned;
         }
 
+        /// <summary>
+        ///     Returns a possible job for <paramref name="t" />
+        /// </summary>
+        /// <param name="pawn"></param>
+        /// <param name="t"></param>
+        /// <param name="forced"></param>
+        /// <returns></returns>
         public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
             Pawn flippedOut = t as Pawn;
-            Building_Bed bed = RestUtility.FindBedFor(flippedOut, flippedOut, true, false, false);
+            Building_Bed bed = RestUtility.FindBedFor(flippedOut, flippedOut, true, false);
             if (bed == null)
             {
                 return null;

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using RimWorld;
+﻿using RimWorld;
 using Verse;
 
 namespace Restrain
@@ -12,5 +8,4 @@ namespace Restrain
     {
         public static JobDef Restrain;
     }
-    
 }
