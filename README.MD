@@ -12,4 +12,7 @@
 ### 1.0.0
 Initial release
 
-
+### 1.1.0
+Added Skillcheck
+ - If the mental break is violent it will roll a dice modified by the relativ melee strenght.
+ - If non-violent the melee check is attempted first, then it tries a social check too.

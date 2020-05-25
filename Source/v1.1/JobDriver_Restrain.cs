@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RimWorld;
 using Verse;
 using Verse.AI;
@@ -36,6 +37,21 @@ namespace Restrain
         {
             Hediff restrainHediff = HediffMaker.MakeHediff(KnockItOffHediffDefOf.Restrain, JobTarget);
             Hediff annoyedHediff = HediffMaker.MakeHediff(KnockItOffHediffDefOf.Annoyed, JobTarget);
+
+
+            SkillRecord meleeSkillRecordJT = JobTarget.skills.GetSkill(SkillDefOf.Melee);
+            SkillRecord meleeSkillRecordPawn = pawn.skills.GetSkill(SkillDefOf.Melee);
+
+            bool imprisonCheck = SkillDiffCheck(meleeSkillRecordJT, meleeSkillRecordPawn);
+
+            //If JobTarget is not violent, try to just talk him into calming down.
+            if (!imprisonCheck && !JobTarget.InAggroMentalState)
+            {
+                SkillRecord socialSkillRecordJT = JobTarget.skills.GetSkill(SkillDefOf.Social);
+                SkillRecord socialSkillRecordPawn = pawn.skills.GetSkill(SkillDefOf.Social);
+
+                imprisonCheck = SkillDiffCheck(socialSkillRecordJT, socialSkillRecordPawn);
+            }
 
             // Stop the Job is the Pawn or Bed is destroyed or the Bed is no longer available for Prisoners.
             this.FailOnDestroyedOrNull(JobTargetPawnIndex);
@@ -79,8 +95,17 @@ namespace Restrain
             {
                 initAction = delegate
                 {
-                    JobTarget.health.AddHediff(restrainHediff, null, null);
-                    JobTarget.health.AddHediff(annoyedHediff);
+                    if (imprisonCheck)
+                    {
+                        Messages.Message($"Successfully restrained {JobTarget.Name}", MessageTypeDefOf.PositiveEvent);
+                        JobTarget.health.AddHediff(restrainHediff, null, null);
+                        JobTarget.health.AddHediff(annoyedHediff);
+                    }
+                    else
+                    {
+                        Messages.Message($"Failed to restrain {JobTarget.Name}", MessageTypeDefOf.NegativeEvent);
+                        pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
+                    }
                 }
             };
             yield return toilSleep;
@@ -90,7 +115,7 @@ namespace Restrain
             {
                 initAction = delegate
                 {
-                    if (job.def.makeTargetPrisoner)
+                    if (imprisonCheck)
                     {
                         CheckedMakePrisoner();
                     }
@@ -109,10 +134,13 @@ namespace Restrain
             {
                 initAction = delegate
                 {
-                    CheckedMakePrisoner();
-                    if (JobTarget.playerSettings == null)
+                    if (imprisonCheck)
                     {
-                        JobTarget.playerSettings = new Pawn_PlayerSettings(JobTarget);
+                        CheckedMakePrisoner();
+                        if (JobTarget.playerSettings == null)
+                        {
+                            JobTarget.playerSettings = new Pawn_PlayerSettings(JobTarget);
+                        }
                     }
                 }
             };
@@ -125,23 +153,26 @@ namespace Restrain
             {
                 initAction = delegate
                 {
-                    IntVec3 pIntVec3 = DropBed.Position;
-                    pawn.carryTracker.TryDropCarriedThing(pIntVec3, ThingPlaceMode.Direct, out Thing _);
-                    if (!DropBed.Destroyed && (DropBed.OwnersForReading.Contains(JobTarget) ||
-                                               DropBed.Medical && DropBed.AnyUnoccupiedSleepingSlot ||
-                                               JobTarget.ownership == null))
+                    if (imprisonCheck)
                     {
-                        JobTarget.jobs.Notify_TuckedIntoBed(DropBed);
-                        JobTarget.mindState.Notify_TuckedIntoBed();
-                    }
+                        IntVec3 pIntVec3 = DropBed.Position;
+                        pawn.carryTracker.TryDropCarriedThing(pIntVec3, ThingPlaceMode.Direct, out Thing _);
+                        if (!DropBed.Destroyed && (DropBed.OwnersForReading.Contains(JobTarget) ||
+                                                   DropBed.Medical && DropBed.AnyUnoccupiedSleepingSlot ||
+                                                   JobTarget.ownership == null))
+                        {
+                            JobTarget.jobs.Notify_TuckedIntoBed(DropBed);
+                            JobTarget.mindState.Notify_TuckedIntoBed();
+                        }
 
-                    if (JobTarget.IsPrisonerOfColony)
-                    {
-                        LessonAutoActivator.TeachOpportunity(ConceptDefOf.PrisonerTab, JobTarget,
-                            OpportunityType.GoodToKnow);
-                    }
+                        if (JobTarget.IsPrisonerOfColony)
+                        {
+                            LessonAutoActivator.TeachOpportunity(ConceptDefOf.PrisonerTab, JobTarget,
+                                OpportunityType.GoodToKnow);
+                        }
 
-                    JobTarget.health.RemoveHediff(restrainHediff);
+                        JobTarget.health.RemoveHediff(restrainHediff);
+                    }
                 },
                 defaultCompleteMode = ToilCompleteMode.Instant
             };
@@ -149,6 +180,49 @@ namespace Restrain
             yield return toil4;
         }
 
+        private bool SkillDiffCheck(SkillRecord jt, SkillRecord pawn)
+        {
+            Random r = new Random();
+            //If Pawn is unable to do violence, he will not attempt it
+            if (!pawn.TotallyDisabled)
+            {
+                //If JobTarget is unable to do violence, he will be overpowered
+                if (jt.TotallyDisabled)
+                {
+                    return true;
+                }
+
+                int skillDiff = (jt.Level - pawn.Level);
+                int skillDiffPositiv = skillDiff < 0 ? skillDiff * -1 : skillDiff;
+                int dice = r.Next(0, 21 + skillDiffPositiv);
+
+                //Pawn > JobTarget
+                if (skillDiff < 0)
+                {
+                    if (dice >= pawn.Level)
+                    {
+                        return true;
+                    }
+                }
+                //Pawn < JobTarget
+                else if (skillDiff > 0)
+                {
+                    if (dice < pawn.Level)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    if (r.NextDouble() <= 0.5)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
         //Makes pawn a prisoner
         private void CheckedMakePrisoner()
         {
